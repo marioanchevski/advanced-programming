@@ -3,6 +3,7 @@ package laboratory_exercises.lab02;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
@@ -39,8 +40,8 @@ class MatrixReader {
     }
 }
 
-class DoubleMatrix {
-    private double[][] doubleMatrix;
+final class DoubleMatrix {
+    private final double[][] doubleMatrix;
 
     public DoubleMatrix(double[] f, int m, int n) throws InsufficientElementsException {
         if (f.length < m * n)
@@ -101,6 +102,12 @@ class DoubleMatrix {
     }
 
     public double[] toSortedArray() {
+/*
+        double[][] copy = new double[rows()][columns()];
+        IntStream.range(0, copy.length).forEach(i->{
+            copy[i]=Arrays.copyOf(doubleMatrix[i], doubleMatrix[i].length);
+        });
+*/
         return Arrays.stream(doubleMatrix).flatMapToDouble(array -> Arrays.stream(array))
                 .boxed()
                 .sorted(Comparator.reverseOrder())
@@ -109,15 +116,14 @@ class DoubleMatrix {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        String[][] stringMatrix = new String[rows()][columns()];
         for (int i = 0; i < rows(); i++) {
-            for (int j = 0; j < columns() - 1; j++) {
-                s.append(String.format("%.2f\t", doubleMatrix[i][j]));
+            for (int j = 0; j < columns(); j++) {
+                stringMatrix[i][j] = String.format("%.2f", doubleMatrix[i][j]);
             }
-            s.append(String.format("%.2f\n", doubleMatrix[i][columns() - 1]));
         }
-        s = new StringBuilder(s.substring(0, s.length() - 1));
-        return s.toString();
+        return Arrays.stream(stringMatrix).map(a -> String.join("\t", a))
+                .collect(Collectors.joining("\n"));
     }
 
     @Override
