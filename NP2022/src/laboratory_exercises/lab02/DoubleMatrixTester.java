@@ -102,13 +102,13 @@ final class DoubleMatrix {
     }
 
     public double[] toSortedArray() {
-/*
+
         double[][] copy = new double[rows()][columns()];
-        IntStream.range(0, copy.length).forEach(i->{
-            copy[i]=Arrays.copyOf(doubleMatrix[i], doubleMatrix[i].length);
+        IntStream.range(0, copy.length).forEach(i -> {
+            copy[i] = Arrays.copyOf(doubleMatrix[i], doubleMatrix[i].length);
         });
-*/
-        return Arrays.stream(doubleMatrix).flatMapToDouble(array -> Arrays.stream(array))
+
+        return Arrays.stream(copy).flatMapToDouble(array -> Arrays.stream(array))
                 .boxed()
                 .sorted(Comparator.reverseOrder())
                 .mapToDouble(i -> i.doubleValue()).toArray();
