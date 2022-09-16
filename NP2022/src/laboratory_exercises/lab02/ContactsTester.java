@@ -46,7 +46,7 @@ class EmailContact extends Contact {
 
     @Override
     public String toString() {
-        return String.format("\"%s\"", getEmail());
+        return String.format("\"%s\"", email);
     }
 }
 
@@ -79,7 +79,7 @@ class PhoneContact extends Contact {
 
     @Override
     public String toString() {
-        return String.format("\"%s\"", getPhone());
+        return String.format("\"%s\"", phone);
     }
 }
 
@@ -161,20 +161,15 @@ class Student {
 
     @Override
     public String toString() {
-        return "{\"ime\":" +
-                "\"" + firstName + "\", " +
-                "\"prezime\":" +
-                "\"" + lastName + "\", " +
-                "\"vozrast\":" +
-                age + ", " +
-                "\"grad\":" +
-                "\"" + city + "\", " +
-                "\"indeks\":" +
-                index + ", " +
-                "\"telefonskiKontakti\":" +
-                Arrays.toString(getPhoneContacts()) + ", " +
-                "\"emailKontakti\":" +
-                Arrays.toString(getEmailContacts()) + '}';
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("{\"ime\":\"%s\", ", this.firstName));
+        stringBuilder.append(String.format("\"prezime\":\"%s\", ", this.lastName));
+        stringBuilder.append(String.format("\"vozrast\":%d, ", this.age));
+        stringBuilder.append(String.format("\"grad\":\"%s\", ", this.city));
+        stringBuilder.append(String.format("\"indeks\":%d, ", this.index));
+        stringBuilder.append(String.format("\"telefonskiKontakti\":%s, ", Arrays.toString(getPhoneContacts())));
+        stringBuilder.append(String.format("\"emailKontakti\":%s}", Arrays.toString(getEmailContacts())));
+        return stringBuilder.toString();
     }
 }
 
