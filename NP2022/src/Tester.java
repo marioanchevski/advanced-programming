@@ -9,22 +9,14 @@ public class Tester {
 
 
     public static void main(String[] args) {
-        String[] arr = {"Hello", "World"};
-
-        List<Integer> list= new ArrayList<>();
-        int[] b =  new int[2];
-
-        int[] ar = {1,2,3};
-        b = Arrays.stream(ar).filter(i->i>=2).toArray();
-
-        for(int i : b)
-            System.out.println(i);
-        System.out.println(b.getClass());
-
-
+        int[] array = {1,2,3,4,5};
+        test(1,2,3);
     }
-    public static int[] getCopy(int[] a){
-        return Arrays.copyOf(a, a.length);
+
+    public static void test(int... mace){
+        for (int i : mace){
+            System.out.println(i);
+        }
     }
 }
 
