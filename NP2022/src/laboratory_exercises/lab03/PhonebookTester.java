@@ -7,21 +7,21 @@ import java.util.stream.Collectors;
 class InvalidNameException extends InvalidFormatException {
     String name;
 
-    public InvalidNameException(String name) {
-        super(name);
-        this.name = name;
+    public InvalidNameException(String message) {
+        super(message);
+        this.name = message;
     }
 }
 
 class InvalidNumberException extends InvalidFormatException {
-    public InvalidNumberException(String number) {
-        super(number);
+    public InvalidNumberException(String message) {
+        super(message);
     }
 }
 
 class MaximumSizeExceddedException extends InvalidFormatException {
-    public MaximumSizeExceddedException() {
-        super("Maximum size excedded");
+    public MaximumSizeExceddedException(String message) {
+        super(message);
     }
 }
 
@@ -39,11 +39,11 @@ class Contact {
 
     public Contact(String name, String... phonenumber) throws InvalidNameException, InvalidNumberException, MaximumSizeExceddedException {
         if (!validName(name))
-            throw new InvalidNameException("123");
+            throw new InvalidNameException("");
         if (!validNumbers(phonenumber))
             throw new InvalidNumberException("invalid number");
         if (phonenumber.length > MAX_NUMBERS)
-            throw new MaximumSizeExceddedException();
+            throw new MaximumSizeExceddedException("");
         phoneNumber = Arrays.copyOf(phonenumber, MAX_NUMBERS);
         this.name = name;
         numberOfContacts = phonenumber.length;
@@ -67,7 +67,6 @@ class Contact {
                     return false;
             if (!validDigit(number.charAt(2)))
                 return false;
-
         }
         return true;
     }
@@ -87,15 +86,14 @@ class Contact {
 
     public void addNumber(String phonenumber) throws InvalidNameException, MaximumSizeExceddedException {
         if (!validNumbers(phonenumber))
-            throw new InvalidNameException("312");
+            throw new InvalidNameException("");
         if (numberOfContacts == MAX_NUMBERS)
-            throw new MaximumSizeExceddedException();
+            throw new MaximumSizeExceddedException("");
         phoneNumber[numberOfContacts++] = phonenumber;
     }
 
     @Override
     public String toString() {
-
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getName()).append("\n");
         stringBuilder.append(numberOfContacts).append("\n");
@@ -109,12 +107,12 @@ class Contact {
         String[] parts = s.split("\n");
         String[] nums = parts[1].substring(1, parts[1].length() - 1).split(", ");
         try {
-            Contact c = new Contact(parts[0], nums);
-            return c;
+            return new Contact(parts[0], nums);
         } catch (InvalidFormatException e) {
             return null;
         }
     }
+
 }
 
 class PhoneBook {
@@ -130,10 +128,10 @@ class PhoneBook {
 
     public void addContact(Contact contact) throws MaximumSizeExceddedException, InvalidNameException {
         if (numberOfContacts == MAX_CONTACTS)
-            throw new MaximumSizeExceddedException();
-        for (Contact c : contacts) {
-            if (c != null)
-                if (c.getName().equals(contact.getName()))
+            throw new MaximumSizeExceddedException("");
+        for (Contact contact1 : contacts) {
+            if (contact1 != null)
+                if (contact1.getName().equals(contact.getName()))
                     throw new InvalidNameException(contact.getName());
         }
 
@@ -170,29 +168,32 @@ class PhoneBook {
         }
         if (index == -1)
             return false;
-        contacts[index] = null;
-        numberOfContacts--;
+        //shift elements
+        for (int i = index; i < numberOfContacts; i++)
+            contacts[i] = contacts[i + 1];
+        contacts[numberOfContacts--] = null;
         return true;
     }
 
     public static boolean saveAsTextFile(PhoneBook phonebook, String path) {
         File file = new File(path);
-        PrintWriter pw;
+        PrintWriter printWriter;
         try {
-            file.createNewFile();
-            pw = new PrintWriter(file);
-            pw.print(phonebook.toString());
-            pw.flush();
+            if (!file.exists())
+                file.createNewFile();
+            printWriter = new PrintWriter(new FileOutputStream(path));
+            printWriter.print(phonebook.toString());
         } catch (IOException e) {
             return false;
         }
+        printWriter.close();
         return true;
-
     }
 
     public static PhoneBook loadFromTextFile(String path) {
         File file = new File(path);
         PhoneBook result = new PhoneBook();
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
@@ -211,11 +212,12 @@ class PhoneBook {
     }
 
     private boolean containsContact(Contact contact, Contact[] result) {
-        for (Contact c : result)
+        return Arrays.stream(result).filter(Objects::nonNull).anyMatch(i -> i.getName().equals(contact.getName()));
+        /*for (Contact c : result)
             if (c != null)
                 if (contact.getName().equals(c.getName()))
                     return true;
-        return false;
+        return false;*/
     }
 
     public Contact[] getContactsForNumber(String number_prefix) {
@@ -233,17 +235,18 @@ class PhoneBook {
             }
         }
 
-        result = Arrays.copyOf(result, resultNumberOfContacts);
-        return Arrays.stream(result).sorted(nameComaprator).toArray(Contact[]::new);
+        //result = Arrays.copyOf(result, resultNumberOfContacts);
+        return Arrays.stream(result).filter(Objects::nonNull).sorted(nameComaprator).toArray(Contact[]::new);
     }
 
     @Override
     public String toString() {
-        String s = "";
+        return Arrays.stream(getContacts()).map(s -> String.format("%s\n", s)).collect(Collectors.joining(""));
+/*        String s = "";
         for (Contact contact : getContacts()) {
             s += contact + "\n";
         }
-        return s;
+        return s;*/
     }
 }
 
@@ -315,8 +318,8 @@ public class PhonebookTester {
         } catch (Exception e) {
         }
         if (!exception_thrown) System.out.println("Your addContact method doesn't throw InvalidNameException");
-        /*
-		exception_thrown = false;
+
+		/*exception_thrown = false;
 		try {
 		phonebook.addContact(new Contact(jin.nextLine()));
 		} catch ( MaximumSizeExceddedException e ) {
@@ -324,7 +327,7 @@ public class PhonebookTester {
 		}
 		catch ( Exception e ) {}
 		if ( ! exception_thrown ) System.out.println("Your addContact method doesn't throw MaximumSizeExcededException");
-        */
+*/
     }
 
     private static void testContact(Scanner jin) throws Exception {
