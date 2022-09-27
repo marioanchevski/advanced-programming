@@ -23,7 +23,9 @@ class IntegerList {
     }
 
     public int remove(int idx) {
-        return integerList.remove(idx);
+        if (idx <= integerList.size() && idx > -1)
+            return integerList.remove(idx);
+        return 0;
     }
 
     public void set(int el, int idx) {
