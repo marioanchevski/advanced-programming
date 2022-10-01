@@ -1,4 +1,4 @@
-package practice.midterm1.candidate_evaluaotr;
+package practice.midterm1.candidate_evaluator;
 
 import java.util.Scanner;
 
