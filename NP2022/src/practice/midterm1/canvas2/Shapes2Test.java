@@ -12,7 +12,7 @@ class IrregularCanvasException extends Exception {
 
 enum ShapeType {
     CIRCLE,
-    SQURE
+    SQUARE
 }
 
 abstract class Shape {
@@ -36,7 +36,7 @@ class Square extends Shape {
 
     @Override
     ShapeType getType() {
-        return ShapeType.SQURE;
+        return ShapeType.SQUARE;
     }
 
     public void setSize(double side) {
@@ -107,7 +107,7 @@ class Canvas implements Comparable<Canvas> {
 
     public int getTotalSquares() {
         return (int) shapes.stream()
-                .filter(shape -> shape.getType().equals(ShapeType.SQURE))
+                .filter(shape -> shape.getType().equals(ShapeType.SQUARE))
                 .count();
     }
 
